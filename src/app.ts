@@ -3,7 +3,7 @@ import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { AppError } from "../middleware/AppError.js";
+import { NotFoundError } from "./utils/ErrorHandler";
 
 dotenv.config();
 export const app = express();
@@ -28,9 +28,9 @@ app.get("/test", (req: Request, res: Response, next: NextFunction) => {
 });
 
 //Unknown routes
- 
+
 app.all(/.*/, (req: Request, res: Response, next: NextFunction) => {
-  const error = new AppError(`Route ${req.originalUrl} not found `, 404);
+  const error = new NotFoundError(`Route ${req.originalUrl} not found `, 404);
 
   next(error);
 });

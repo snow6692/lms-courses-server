@@ -5,10 +5,6 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 
-
-
-
-
 await (async () => {
   try {
     await connectDB();
@@ -21,5 +17,4 @@ await (async () => {
   }
 })();
 
-async function t() {}
 //Create server
