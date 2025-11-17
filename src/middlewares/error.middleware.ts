@@ -5,11 +5,12 @@ import {
   BadRequestError,
   HttpError,
   UnauthorizedError,
+  ValidationError,
 } from "../utils/ErrorHandler";
 
 // 1. Convert common errors to HttpError
-const convertErrors = (
-  err: Error,
+export const convertErrors = (
+  err: HttpError,
   req: Request,
   res: Response,
   next: NextFunction
@@ -40,22 +41,19 @@ const convertErrors = (
     return next(new UnauthorizedError("Token expired. Please log in again."));
   }
 
-  
-
   // If not converted, pass through
   next(err);
 };
 
 // 2. Final error handler (only deals with HttpError or fallback)
-const handleHttpError = (
+export const handleHttpError = (
   err: HttpError,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const statusCode = err instanceof HttpError ? err.statusCode : 500;
-  const message =
-    err instanceof HttpError ? err.message : "Internal Server Error";
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
 
   // LOG FULL ERROR (server-side only)
   console.error("[ERROR]", {
@@ -76,14 +74,11 @@ const handleHttpError = (
     error: message,
   };
 
-  // Optional: add validation errors
-  if (err instanceof BadRequestError && "errors" in err) {
+  if (err instanceof ValidationError) {
+    response.errors = err.errors;
+  } else if ("errors" in err) {
     response.errors = (err as any).errors;
   }
 
   res.status(statusCode).json(response);
 };
-
-// Register middlewares
-app.use(convertErrors);
-app.use(handleHttpError);

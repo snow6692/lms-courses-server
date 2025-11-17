@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activate Your Account</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f6f9;
+        color: #333;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 30px auto;
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+      }
+      .header h1 {
+        font-size: 28px;
+        margin-bottom: 8px;
+      }
+      .header p {
+        font-size: 16px;
+        opacity: 0.9;
+      }
+      .content {
+        padding: 30px 25px;
+        text-align: center;
+      }
+      .greeting {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: #1f2937;
+      }
+      .message {
+        font-size: 16px;
+        color: #4b5563;
+        margin-bottom: 25px;
+      }
+      .code-box {
+        display: inline-block;
+        background: #f3f4f6;
+        padding: 18px 30px;
+        border-radius: 10px;
+        border: 2px dashed #6366f1;
+        margin: 20px 0;
+        font-family: "Courier New", monospace;
+      }
+      .code {
+        font-size: 28px;
+        font-weight: bold;
+        color: #6366f1;
+        letter-spacing: 4px;
+      }
+      .btn {
+        display: inline-block;
+        background: #6366f1;
+        color: white;
+        padding: 14px 32px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        margin: 20px 0;
+        transition: background 0.3s;
+      }
+      .btn:hover {
+        background: #4f46e5;
+      }
+      .footer {
+        background: #f9fafb;
+        padding: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: #9ca3af;
+      }
+      .footer a {
+        color: #6366f1;
+        text-decoration: none;
+      }
+      @media (max-width: 480px) {
+        .container {
+          margin: 15px;
+        }
+        .header h1 {
+          font-size: 24px;
+        }
+        .code {
+          font-size: 24px;
+          letter-spacing: 2px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1>Welcome to Our Platform!</h1>
+        <p>Just one quick step to activate your account</p>
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+        <p class="greeting">Hello <%= user.name %>,</p>
+        <p class="message">
+          Thank you for signing up! To complete your registration and activate
+          your account, please use the activation code below:
+        </p>
+
+        <div class="code-box">
+          <div class="code"><%= activationCode %></div>
+        </div>
+
+        <p class="message">Or click the button below to activate instantly:</p>
+
+        <a
+          href="https://yoursite.com/activate?code=<%= activationCode %>"
+          class="btn"
+        >
+          Activate Account Now
+        </a>
+
+        <p
+          class="message"
+          style="margin-top: 25px; font-size: 14px; color: #6b7280"
+        >
+          This code will expire in <strong>15 minutes</strong>.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          &copy; <%= new Date().getFullYear() %> Your Platform. All rights
+          reserved.
+        </p>
+        <p>
+          Didn't sign up?
+          <a href="#">Ignore this email</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
