@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { Secret } from "jsonwebtoken";
-import UserModel from "../models/user.model.js";
+import UserModel, { IUser } from "../models/user.model.js";
 import { BadRequestError, HttpError } from "../utils/ErrorHandler.js";
 import { catchAsyncError } from "../middlewares/catchAsyncErrors.js";
 import {
+  activateUserSchema,
   registrationSchema,
   RegistrationType,
 } from "../validation/user.zod.js";
@@ -64,3 +65,40 @@ export const createActivationToken = (
 
   return { token, activationCode };
 };
+
+// controllers/user.controller.ts
+export const activateUser = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { activation_code, activation_token } = validateData(
+      activateUserSchema,
+      req.body
+    );
+
+    const newUser = jwt.verify(
+      activation_token,
+      process.env.ACTIVATION_SECRET as Secret
+    ) as { user: IUser; activationCode: string };
+
+    if (newUser.activationCode !== activation_code) {
+      return next(new HttpError("Invalid activation code", 400));
+    }
+
+    const { name, email, password } = newUser.user;
+
+    const existsUser = await UserModel.findOne({ email });
+    if (existsUser) {
+      return next(new HttpError("Email already exists", 400));
+    }
+
+    await UserModel.create({
+      name,
+      email,
+      password,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Account activated successfully!",
+    });
+  }
+);
