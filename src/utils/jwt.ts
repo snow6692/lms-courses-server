@@ -23,7 +23,9 @@ export const sendToken = async (
 
   //upload session to redis
   const userId = user._id.toString();
-  await redis.set(userId, JSON.stringify(user), "EX", refreshTokenExpire);
+  const userObj = user.toObject();
+  delete userObj.password;
+  await redis.set(userId, JSON.stringify(userObj), "EX", refreshTokenExpire);
 
   // OPTIONS FOR COOKIES
   const accessTokenOptions: ITokenOptions = {
@@ -46,8 +48,6 @@ export const sendToken = async (
   res.cookie("access_token", accessToken, accessTokenOptions);
   res.cookie("refresh_token", refreshToken, refreshTokenOptions);
 
-  const userObj = user.toObject();
-  delete userObj.password;
   res.status(statusCode).json({
     success: true,
     user: userObj,

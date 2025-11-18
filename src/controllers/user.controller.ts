@@ -12,6 +12,7 @@ import {
 import { validateData } from "../validation/validate.js";
 import { sendMail } from "../utils/sendMail.js";
 import { sendToken } from "../utils/jwt.js";
+import { redis } from "../utils/redis.js";
 //Register
 
 // controllers/user.controller.ts
@@ -128,6 +129,9 @@ export const logoutUser = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     res.cookie("access_token", "", { maxAge: 1 });
     res.cookie("refresh_token", "", { maxAge: 1 });
+    if (req.user?._id) {
+      await redis.del(req.user._id.toString());
+    }
 
     return res.status(200).json({
       success: true,
