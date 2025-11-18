@@ -7,7 +7,10 @@ export const registrationSchema = z.object({
   password: z
     .string()
     .min(9, "Password at least 8 chars")
-    .regex(PASSWORD_REGEX,"Password must contains numbers and one upper,lower char and a symbol"),
+    .regex(
+      PASSWORD_REGEX,
+      "Password must contains numbers and one upper,lower char and a symbol"
+    ),
   avatar: z.string().optional(),
 });
 
@@ -17,3 +20,16 @@ export const activateUserSchema = z.object({
   activation_code: z.string().min(2, "activation code is required"),
   activation_token: z.string().min(2, "activation token is required"),
 });
+
+export const loginSchema = z.object({
+  email: z.email(),
+  password: z
+    .string()
+    .min(9, "Password at least 8 chars")
+    .regex(
+      PASSWORD_REGEX,
+      "Password must contains numbers and one upper,lower char and a symbol"
+    ),
+});
+
+export type LoginType = z.infer<typeof loginSchema>;

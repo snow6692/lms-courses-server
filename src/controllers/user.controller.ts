@@ -5,11 +5,13 @@ import { BadRequestError, HttpError } from "../utils/ErrorHandler.js";
 import { catchAsyncError } from "../middlewares/catchAsyncErrors.js";
 import {
   activateUserSchema,
+  loginSchema,
   registrationSchema,
   RegistrationType,
 } from "../validation/user.zod.js";
 import { validateData } from "../validation/validate.js";
 import { sendMail } from "../utils/sendMail.js";
+import { sendToken } from "../utils/jwt.js";
 //Register
 
 // controllers/user.controller.ts
@@ -99,6 +101,37 @@ export const activateUser = catchAsyncError(
     res.status(201).json({
       success: true,
       message: "Account activated successfully!",
+    });
+  }
+);
+
+// login user
+
+export const loginUser = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = validateData(loginSchema, req.body);
+    const user = await UserModel.findOne({ email }).select("+password");
+    if (!user) {
+      return next(new HttpError("Invalid email or password", 400));
+    }
+    const isPasswordMatched = await user.comparePassword(password);
+    if (!isPasswordMatched) {
+      return next(new HttpError("Invalid email or password", 400));
+    }
+
+    await sendToken(user, 200, res);
+  }
+);
+
+// logout user
+export const logoutUser = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    res.cookie("access_token", "", { maxAge: 1 });
+    res.cookie("refresh_token", "", { maxAge: 1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
     });
   }
 );
